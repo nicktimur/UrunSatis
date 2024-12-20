@@ -102,16 +102,9 @@ public class HomeController : Controller
             {
                 if (user.Sifre == AesEncryption.Encrypt(kullanici.Sifre))
                 {
-                    if (user.AktifMi)
-                    {
-                        var userJson = JsonConvert.SerializeObject(user);
-                        HttpContext.Session.SetString("user", userJson);
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                        return RedirectToAction("VerifyMail", "Admin", new { email = user.Email });
-                    }
+                    var userJson = JsonConvert.SerializeObject(user);
+                    HttpContext.Session.SetString("user", userJson);
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
