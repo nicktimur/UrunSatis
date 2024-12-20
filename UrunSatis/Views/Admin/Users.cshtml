@@ -1,0 +1,345 @@
+﻿@model Kullanici
+@{
+    var user = Context.Items["CurrentUser"] as Kullanici;
+    ViewData["Title"] = "Kullanıcılar";
+    var users = ViewBag.Users as IEnumerable<UrunSatis.Models.Kullanici>;
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <p></p>
+                                    <h3 class="card-title">Kullanıcılar</h3>
+                                </div>
+                                    <div class="col-lg-2 d-flex justify-content-end">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-user">
+                                            Yeni Kullanıcı Ekle
+                                        </button>
+                                    </div>                                    
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <div class="card-body">
+                            <div id="userGrid" style="height: 600px" class="ag-theme-quartz-dark"></div>
+                                <!-- Edit Modal -->
+                                <div class="modal fade" data-backdrop="false" id="edit_user_modal">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Kullanıcıyı Düzenle</h4>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="post" asp-action="Users">
+                                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                    <input hidden asp-for="Id" type="text" id="UserIdEdit" class="form-control" placeholder="">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-2 col-form-label">Kullanıcı Adı:</label>
+                                                        <div class="col-sm-10">
+                                                            <input asp-for="KullaniciAdi" type="text" id="kullaniciAdiEdit" class="form-control" placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-2 col-form-label">İsim:</label>
+                                                        <div class="col-sm-10">
+                                                            <input asp-for="Isim" type="text" id="isimEdit" class="form-control" placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-2 col-form-label">Soyisim:</label>
+                                                        <div class="col-sm-10">
+                                                            <input asp-for="Soyisim" type="text" id="soyisimEdit" class="form-control" placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-2 col-form-label">Email:</label>
+                                                        <div class="col-sm-10">
+                                                            <input asp-for="Email" type="email" id="emailEdit" class="form-control" placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-2 col-form-label">Kullanıcı Türü:</label>
+                                                        <div class="col-sm-10">
+                                                            <select asp-for="KullaniciTipi" id="userTypeSelect" class="form-select" aria-label="Default select example">
+                                                                <option value="0">Kullanıcı</option>
+                                                                <option value="1">Admin</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-light">Kapat</button>
+                                                        <button type="submit" class="btn btn-primary">Düzenlemeyi Kaydet</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.modal -->
+
+                                <!-- Adding Modal -->
+                                <div class="modal fade" data-backdrop="false" id="add-user">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Kullanıcı Ekle</h4>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="post" asp-action="RegisterAdmin">
+                                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                    @if (ViewBag.Message != null)
+                                                    {
+                                                        <div class="form-group" style="color: green;">@ViewBag.Message</div>
+                                                    }
+                                                    @if (ViewBag.Error != null)
+                                                    {
+                                                        <div id="error-message" value="@ViewBag.Error"></div>
+                                                        <div class="form-group" style="color: red;">@ViewBag.Error</div>
+                                                    }
+                                                    <div class="input-group mb-3">
+                                                        <input asp-for="Isim" type="text"  class="form-control" placeholder="İsim" required>
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">
+                                                                <span class="fas fa-user"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <input asp-for="Soyisim" type="text" class="form-control" placeholder="Soyisim" required>
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">
+                                                                <span class="fas fa-user"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <input asp-for="KullaniciAdi" type="text" class="form-control" placeholder="Kullanıcı Adı" required>
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">
+                                                                <span class="fas fa-user"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <input asp-for="Email" type="email"  class="form-control" placeholder="Email" required>
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">
+                                                                <span class="fas fa-envelope"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <input asp-for="Sifre" type="password" class="form-control" placeholder="Şifre" required>
+                                                        <div class="input-group-append">
+                                                            <div class="input-group-text">
+                                                                <span class="fas fa-lock"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <select asp-for="KullaniciTipi" class="custom-select">
+                                                            <option value="0">Kullanıcı</option>
+                                                            <option value="1">Admin</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="row">
+                                                        <!-- /.col -->
+                                                        <div class="col-4">
+                                                            <button type="submit" class="btn btn-primary btn-block">Kullanıcı Ekle</button>
+                                                        </div>
+                                                        <!-- /.col -->
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.modal -->
+
+                               
+                                <!-- Delete Modal -->
+                                <div class="modal fade" data-backdrop="false" id="delete_modal">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Kullanıcıyı Sil</h4>
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Bu hesabı silmek istediğinize emin misiniz?</p>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-light">Kapat</button>
+                                                <form method="post" asp-action="DeleteUser">
+                                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                    <input hidden asp-for="Id" type="text" id="DeleteUserId" class="form-control" placeholder="">
+                                                    <button type="submit" class="btn btn-danger">Hesabı Sil</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.modal -->
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+</div>
+<!-- /.content-wrapper -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+<script>
+    let gridApi;
+    var users = @Html.Raw(ViewBag.Users);
+    var kullaniciTipi = '@user.KullaniciTipi';
+    var rowData = [];
+    const UserTypeNames = {
+        1: 'Admin',
+        0: 'Kullanıcı'
+    };
+    users.forEach(function (user) {
+        const userType = UserTypeNames[user.KullaniciTipi];
+        rowData.push({
+            "Id": user.Id,
+            "İsim": user.Isim,
+            "Soyisim": user.Soyisim,
+            "Kullanıcı Adı": user.KullaniciAdi,
+            "Email": user.Email,
+            "Kullanıcı Tipi": userType,
+            "Aktif Mi?": user.AktifMi,
+            "Düzenle": `<button class = "btn btn-link edit-button" data-id=${user.Id} data-target="#edit_user_modal">Düzenle</button>
+                        <button class = "btn btn-danger delete-button" data-id=${user.Id} data-target="#delete_modal">Sil</button>`,
+        });
+    });
+
+    var gridOptions;
+    gridOptions = {
+        rowData: rowData,
+        columnDefs: [
+            { field: "Id", hide: true },
+            { field: "İsim" },
+            { field: "Soyisim" },
+            { field: "Kullanıcı Adı" },
+            { field: "Email", minWidth: 200 },
+            { field: "Kullanıcı Tipi", cellEditor: "agSelectCellEditor" },
+            { field: "Aktif Mi?" },
+            {
+                field: "Düzenle",
+                cellRenderer: function (params) {
+                    return `<button class = "btn btn-link edit-button" data-id=${params.data['Id']} data-target="#edit_user_modal">Düzenle</button>
+                                <button class = "btn btn-danger delete-button" data-id=${params.data['Id']} data-target="#delete_modal">Sil</button>`;
+                },
+                flex: 1,
+                minWidth: 200
+            },
+        ],
+        defaultColDef: {
+            filter: "agTextColumnFilter",
+            floatingFilter: true,
+            flex: 1,
+            minWidth: 125,
+            editable: false,
+        },
+        rowSelection: "multiple",
+        suppressRowClickSelection: true,
+        pagination: true,
+        paginationPageSize: 10,
+        paginationPageSizeSelector: [10, 20, 30],
+    };
+
+    
+
+    const gridDiv = document.querySelector("#userGrid");
+    gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const gridContainer = document.querySelector('#userGrid');
+
+        gridContainer.addEventListener('click', function (event) {
+            if (event.target.classList.contains('edit-button')) {
+                const userId = event.target.getAttribute('data-id');
+                if (userId) {
+                    fetch(`/GetUserInfo/${userId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(user => {
+                            document.getElementById('UserIdEdit').value = user.id;
+                            document.getElementById('kullaniciAdiEdit').value = user.kullaniciAdi;
+                            document.getElementById('isimEdit').value = user.isim;
+                            document.getElementById('soyisimEdit').value = user.soyisim;
+                            document.getElementById('emailEdit').value = user.email;
+                            document.getElementById('userTypeSelect').value = user.kullaniciTipi;
+                            $('#edit_user_modal').modal('show');
+                        })
+                        .catch(error => {
+                            console.error('Hata:', error);
+                        });
+                }
+            } else if (event.target.classList.contains('delete-button')) {
+                const userId = event.target.getAttribute('data-id');
+                document.getElementById('DeleteUserId').value = userId;
+                $('#delete_modal').modal('show');
+            }
+        });
+    });
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/userHub") // Hub URL'yi bağla
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    // Bağlantıyı başlat
+    connection.start().then(() => {
+        console.log('SignalR bağlantısı kuruldu.');
+    }).catch(err => console.error(err.toString()));
+
+    // Kullanıcı eklendiğinde listeyi güncelle
+    connection.on("UserAdded", function (user) {
+        console.log('Yeni Kullanıcı Eklendi:', user);
+
+        const newUser = {
+            "Id": user.id,
+            "İsim": user.isim,
+            "Soyisim": user.soyisim,
+            "Kullanıcı Adı": user.kullaniciAdi,
+            "Email": user.email,
+            "Kullanıcı Tipi": UserTypeNames[user.kullaniciTipi],
+            "Aktif Mi?": user.aktifMi,
+            "Düzenle": `<button class="btn btn-link edit-button" data-id=${user.Id} data-target="#edit_user_modal">Düzenle</button>
+                        <button class="btn btn-danger delete-button" data-id=${user.Id} data-target="#delete_modal">Sil</button>`
+        };
+
+        // Ag-Grid'deki verileri güncelle
+        gridApi.applyTransaction({ add: [newUser] });
+    });
+
+</script>
+

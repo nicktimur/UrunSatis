@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+    var urunler = ViewBag.Urunler as IEnumerable<dynamic>;
+    var user = Context.Items["CurrentUser"] as Kullanici;
+}
+<link rel="stylesheet" href="~/css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container-fluid">
+            <br />
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h3 class="card-title">Son Eklenen Ürünler</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                    <ul class="products-list product-list-in-card pl-2 pr-2">
+                        @foreach (var urun in ViewBag.sonUrunler)
+                        {
+                            <li class="item">
+                                <div class="product-img">
+                                    <img src="@urun.ResimYolu" alt="Product Image" class="img-size-50">
+                                </div>
+                                <div class="product-info">
+                                    <a asp-action="Urun" asp-controller="Home" asp-route-id="@urun.Id" class="product-title">
+                                        @urun.Baslik
+                                        <span class="badge badge-warning float-right">@urun.Fiyat TL</span>
+                                    </a>
+                                    <span class="product-Category">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ürün Kategorisi: @urun.Kategori
+                                    </span>
+                                </div>
+                            </li>
+                        }                        
+                    </ul>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer text-center">
+                    <a asp-controller="Home" asp-action="Uruns" class="uppercase">Tüm Ürünleri Göster</a>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-lg-6 col-6">
+                    <!-- small card -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>@ViewBag.UrunSayisi</h3>
+
+                            <p>Adet Ürün</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <a class="small-box-footer">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-6">
+                    <!-- small card -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>@ViewBag.KullaniciSayisi</h3>
+
+                            <p>Kayıtlı Kullanıcı</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <a class="small-box-footer">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+

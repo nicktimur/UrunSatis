@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Yeni Ürün Ekle";
+    var user = Context.Items["CurrentUser"] as Kullanici;
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@model UrunAddingModel
+<link rel="stylesheet" href="~/lib/summernote/summernote-bs4.min.css">
+<!-- CodeMirror -->
+<link rel="stylesheet" href="~/lib/codemirror/codemirror.css">
+<link rel="stylesheet" href="~/lib/codemirror/theme/monokai.css">
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-info">
+            <form method="post" asp-action="AddUrun" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="col-md-15">
+                            <div class="card">
+                                    <div class="col-lg-auto">
+                                        <div class="form-group">
+                                            <label class="col-md-2 col-form-label">Ürün Başlığı:</label>
+                                            <div class="col-md-auto">
+                                                <input asp-for="Baslik" type="text" id="baslik" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-auto">
+                                        <div class="form-group">
+                                            <label class="col-md-2 col-form-label">Ürün Kategorisi:</label>
+                                            <div class="col-md-auto">
+                                                <input asp-for="Kategori" type="text" id="baslik" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-auto">
+                                        <div class="form-group">
+                                            <label class="col-md-2 col-form-label">Ürün Fiyatı:</label>
+                                            <div class="col-md-auto">
+                                                <input asp-for="Fiyat" type="number" id="baslik" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-auto">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <div class="card card-outline card-info">
+                                                    <div class="card-header">
+                                                        <h3 class="card-title">
+                                                            Ürün Açıklaması
+                                                        </h3>
+                                                    </div>
+                                                    <!-- /.card-header -->
+                                                    <div class="card-body">
+                                                        <textarea asp-for="Aciklama" id="summernote" required>
+
+                                                        </textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- /.col-->
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-auto">
+                                        <div class="form-group">
+                                            <label class="col-md-2 col-form-label">Ürün Posteri</label>
+                                            <div class="custom-file">
+                                                <input asp-for="Resim" type="file" id="poster" class="custom-file-input" accept="image/*">
+                                                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-info">Ürün Ekle</button>
+                </div>                        
+            </form>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- jQuery -->
+<script src="~/lib/jquery/jquery.min.js"></script>
+<script src="~/lib/summernote/summernote-bs4.min.js"></script>
+<script src="~/lib/codemirror/codemirror.js"></script>
+<script src="~/lib/codemirror/mode/css/css.js"></script>
+<script src="~/lib/codemirror/mode/xml/xml.js"></script>
+<script src="~/lib/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script>
+    $(function () {
+      // Summernote
+      $('#summernote').summernote()
+
+      // CodeMirror
+      CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
+        mode: "htmlmixed",
+        theme: "monokai"
+      });
+    })
+</script>
+<script>
+    $(document).ready(function () {
+        $('#summernote').summernote({
+            height: 300,
+            callbacks: {
+                onImageUpload: function (files) {
+                    for (var i = 0; i < files.length; i++) {
+                        var reader = new FileReader();
+                        reader.onloadend = function () {
+                            var base64data = reader.result;
+                            $('#summernote').summernote('insertImage', base64data);
+                        };
+                        reader.readAsDataURL(files[i]);
+                    }
+                }
+            }
+        });
+    });
+</script>

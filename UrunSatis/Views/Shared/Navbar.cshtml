@@ -1,0 +1,325 @@
+﻿@{
+    var user = Context.Items["CurrentUser"] as Kullanici;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="~/lib/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="~/lib/toastr/toastr.min.css">
+
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand-md navbar-light">
+        <a <a asp-controller="Home" asp-action="Index" class="navbar-brand">
+            <span class="brand-text font-weight-light">Satış Portalı</span>
+        </a>
+
+        <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav ">
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="Index" class="nav-link">Ana Sayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="Urunler" class="nav-link">Ürünler</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="AboutUs" class="nav-link">Hakkımızda</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="ContactUs" class="nav-link">İletişim</a>
+                </li>
+                @if (user is not null )
+                {
+                    if (user.KullaniciTipi == 1)
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="Admin" asp-action="Index" class="nav-link">Admin Portalı</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    <!-- Right navbar links -->
+
+        <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+
+                @if (user is not null)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" id="username-navbar" data-toggle="dropdown" href="#" aria-expanded="false">
+                            <i class="far fa-user"></i>&nbsp;&nbsp;@user.KullaniciAdi
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;">
+                            <a type="button" data-bs-toggle="modal" data-bs-target="#edit_modal" class="dropdown-item">
+                                <i class="fa-solid fa-pen-to-square"></i>&nbsp;&nbsp;Bilgilerini Düzenle
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a type="button" data-bs-toggle="modal" data-bs-target="#password_modal" class="dropdown-item">
+                                    <i class="fa-solid fa-key"></i>&nbsp;&nbsp;Şifre Değiştir
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a asp-action="Logout" asp-controller="Home" class="dropdown-item">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>&nbsp;&nbsp;Çıkış Yap
+                            </a>
+                        </div>
+                    </li>
+                }
+                else
+                {
+                        <li class="nav-item">
+                            <a asp-controller="Home" asp-action="Login" class="nav-link">Giriş Yap</a>
+                        </li>
+                }
+                <button class="navbar-toggler order-1 ml-auto" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+        </ul>
+</nav>
+<!-- /.navbar -->
+@if(user is not null){
+
+    <!-- Edit Modal -->
+    <div class="modal fade" data-backdrop="false" id="edit_modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Bilgilerini Düzenle</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Kullanıcı Adı:</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="kullaniciAdi" class="form-control" placeholder="" value="@user.KullaniciAdi">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">İsim:</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="isim" class="form-control" placeholder="" value="@user.Isim">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Soyisim:</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="soyisim" class="form-control" placeholder="" value="@user.Soyisim">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Email: (Düzenlenemez)</label>
+                        <div class="col-sm-10">
+                            <input type="email" id="email" class="form-control" placeholder="" value="@user.Email" disabled>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-light">Kapat</button>
+                        <button type="button" class="btn btn-primary" onclick="changeUserData()">Düzenlemeyi Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal -->
+    <!-- Password Modal -->
+    <div class="modal fade" data-bs-backdrop="false" id="password_modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Şifre Değiştir</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Gizli ID Inputu -->
+                    <input type="hidden" id="user-id" value="@user.Id">
+
+                    @Html.AntiForgeryToken()
+
+                    <!-- Eski Şifre -->
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Eski Şifre</label>
+                        <div class="col-sm-10 input-group">
+                            <input type="password" id="eski-sifre" class="form-control" placeholder="">
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('eski-sifre', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Yeni Şifre -->
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Yeni Şifre:</label>
+                        <div class="col-sm-10 input-group">
+                            <input type="password" id="yeni-sifre" class="form-control" placeholder="">
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('yeni-sifre', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Yeni Şifre Tekrar -->
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Şifre Tekrar:</label>
+                        <div class="col-sm-10 input-group">
+                            <input type="password" id="tekrar" class="form-control" placeholder="">
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('tekrar', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" aria-label="Close">Kapat</button>
+                        <button type="button" class="btn btn-primary" onclick="changePassword()">Şifre Değiştir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal -->
+    <!-- JavaScript to Toggle Password Visibility and Fetch API -->
+    <script>
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function changePassword() {
+            const userId = document.getElementById('user-id').value;
+            const eskiSifre = document.getElementById('eski-sifre').value;
+            const yeniSifre = document.getElementById('yeni-sifre').value;
+            const tekrarSifre = document.getElementById('tekrar').value;
+            const minPasswordLength = 8;
+            var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            if (yeniSifre !== tekrarSifre) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Yeni şifreler eşleşmiyor!'
+                })
+                return;
+            }
+
+
+            if (yeniSifre == eskiSifre) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Yeni şifre eski şifreniz olamaz!'
+                })
+                return;
+            }
+
+            if (yeniSifre.length < minPasswordLength) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Yeni şifre en az ' + minPasswordLength + ' karakter uzunluğunda olmalıdır!'
+                })
+                return;
+            }
+
+            $.ajax({ // AJAX Kullanımı
+                url: '/Home/ChangePassword',
+                type: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Anti-forgery token
+                },
+                data: JSON.stringify({
+                    userId: userId,
+                    eskiSifre: eskiSifre,
+                    yeniSifre: yeniSifre
+                }),
+                success: function(data) {
+                    if (data.success) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Şifre Başarıyla Değiştirildi.'
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Şifre değiştirilemedi: ' + data.message
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.error('Hata:', error);
+                }
+            });
+        }
+
+        function changeUserData() {
+            const userId = document.getElementById('user-id').value;
+            const kullaniciAdi = document.getElementById('kullaniciAdi').value;
+            const isim = document.getElementById('isim').value;
+            const soyisim = document.getElementById('soyisim').value;
+            var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+        $.ajax({ // AJAX Kullanımı
+            url: '/Home/EditUser',
+            type: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Anti-forgery token
+            },
+            data: JSON.stringify({
+                userId: userId,
+                kullaniciAdi: kullaniciAdi,
+                isim: isim,
+                soyisim: soyisim
+            }),
+            success: function(data) {
+                if (data.success) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Bilgileriniz başarıyla güncellendi.'
+                    });
+                    var username_clickable = document.getElementById("username-navbar");
+                    username_clickable.innerHTML = kullaniciAdi;
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Bilgileriniz güncellenemedi: ' + data.message
+                    });
+                }
+            },
+            error: function(error) {
+                console.error('Hata:', error);
+            }
+        });
+
+        }
+    </script>
+
+
+}
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+<!-- Toastr -->
+<script src="~/lib/toastr/toastr.min.js"></script>

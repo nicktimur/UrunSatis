@@ -1,0 +1,122 @@
+﻿﻿@using UrunSatis.Models;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Kullanici;
+@{
+    Layout = null;
+}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Satış Portalı - Kayıt Ol</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/lib/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/lib/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/css/adminlte.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="hold-transition register-page">
+    <div class="register-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a asp-controller="Home" asp-action="Index" class="h1">Satış Sitesi</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">Yeni bir hesap oluştur</p>
+
+                <form method="post" asp-action="Register">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="form-group" style="color: green;">@ViewBag.Message</div>
+                    }
+                    @if (ViewBag.Error != null)
+                    {
+                        <div id="error-message" value="@ViewBag.Error"></div>
+                        <div class="form-group" style="color: red;">@ViewBag.Error</div>
+                    }
+                    <div class="input-group mb-3">
+                        <input asp-for="Isim" type="text" id="isim" class="form-control" placeholder="İsim" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="Soyisim" type="text" id="soyisim" class="form-control" placeholder="Soyisim" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="KullaniciAdi" type="text" id="kullaniciAdi" class="form-control" placeholder="Kullanıcı Adı" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="Email" type="email" id="email" class="form-control" placeholder="Email" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="Sifre" type="password" class="form-control" id="sifre" placeholder="Şifre" required minlength="8" title="Şifreniz en az 8 karakter olmalıdır.">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('sifre', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" asp-for="KullaniciTipi" value="1">
+                    <div class="row">
+                        <div class="col-8">
+                            <a asp-controller="Admin" asp-action="Login" class="text-center">Bir hesabım var.</a>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">Kayıt Ol</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+            </div>
+            <!-- /.form-box -->
+        </div><!-- /.card -->
+    </div>
+    <!-- /.register-box -->
+    <!-- jQuery -->
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/js/adminlte.min.js"></script>
+    <script>
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

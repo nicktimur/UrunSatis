@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Ürünler";
+    var urunler = ViewBag.Urunler as IEnumerable<dynamic>;
+    var user = Context.Items["CurrentUser"] as Kullanici;
+}
+<link rel="stylesheet" href="~/css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container-fluid">
+            <br />
+            <div class="row">
+                @foreach(var urun in urunler)
+                {
+                    <div class="col-lg-2">
+                        <a asp-action="Urun" asp-controller="Home" asp-route-id="@urun.Id" class="text-decoration-none">
+                            <div class="callout callout-danger">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5>@urun.Baslik</h5>
+                                    <h7 class="mb-0">Fiyat: @urun.Fiyat TL</h7>
+                                </div>
+                                <img src="@urun.ResimYolu" alt="Photo 1" class="img-fluid mt-2">
+                            </div>
+                        </a>
+                    </div>
+
+                }
+            </div>
+         </div>
+    </section>
+</div>
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .col-lg-2 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .callout {
+        display: flex;
+        flex-direction: column;
+        height: 90%;
+    }
+
+    .img-fluid {
+        max-width: 100%; /* Resim genişliğini %100 ile sınırla */
+        height: auto; /* Yüksekliği otomatik olarak ayarla */
+        max-height: 100px; /* Maksimum yükseklik ayarla, ihtiyaçlarına göre değiştirebilirsin */
+        object-fit: cover; /* Resmin alanı kaplamasını sağlar */
+    }
+
+    .callout {
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .callout:hover {
+            transform: scale(1.02); /* Hover efekti için hafif büyütme */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Hover efekti için daha belirgin gölge */
+        }
+
+    a {
+        text-decoration: none; /* Alt çizgiyi kaldırır */
+        color: inherit; /* Rengi üst öğeden alır, kartın varsayılan rengini kullanır */
+    }
+
+        a:hover {
+            text-decoration: none; /* Hover durumunda da alt çizgi eklenmez */
+            color: inherit; /* Hover durumunda da rengi değiştirmez */
+        }
+
+        a:focus {
+            outline: none; /* Odaklanma durumunda varsayılan kenarlık görünümünü kaldırır */
+        }
+</style>
